@@ -12,7 +12,6 @@ __all__ = ['STAR']
 
 class STAR(torch.nn.Module):
     def __init__(self,
-        gender:     str='female',
         model_file: str='',
         num_betas:  int=10,
     ):
@@ -166,8 +165,8 @@ class STAR(torch.nn.Module):
         J_ = J.clone()
         J_[:, 1:, :] = J[:, 1:, :] - J[:, self.parent, :]
 
-        G_ = torch.cat([R, J_[:, :, :, np.newxis]], dim=-1)
-        pad_row = torch.Tensor([0, 0, 0, 1], dtype=torch.float32).to(
+        G_ = torch.cat([R, J_[:, :, :, np.newaxis]], dim=-1)
+        pad_row = torch.Tensor([0.0, 0.0, 0.0, 1.0]).to(
             self.faces.device
         ).view(1, 1, 1, 4).expand(b, 24, -1, -1)
         G_ = torch.cat([G_, pad_row], dim=2)
@@ -192,12 +191,12 @@ class STAR(torch.nn.Module):
         v = torch.matmul(T, rest_shape_h[:, :, :, np.newaxis])[:, :, :3, 0]
         v = v + trans[:, np.newaxis, :]
             
-        root_transform = self.with_zeros(
+        root_transform = self._with_zeros(
             torch.cat((R[:, 0], J[:, 0][:, :, np.newaxis]), 2)
         )
         results =  [root_transform]
         for i in range(0, self.parent.shape[0]):
-            transform_i = self.with_zeros(
+            transform_i = self._with_zeros(
                 torch.cat((
                     R[:, i + 1], J[:, i + 1][:, :, np.newaxis] - J[:, self.parent[i]][:, :, np.newaxis]), dim=2
                 ))
@@ -209,8 +208,21 @@ class STAR(torch.nn.Module):
         
         res = { }
         res['vertices'] = v
-        res['faces'] = self.f #NOTE: or self.faces and ignore the np.array self.f
+        res['faces'] = self.faces #NOTE: or self.faces and ignore the np.array self.f
         res['v_posed'] = v_posed
         res['v_shaped'] = v_shaped
         res['joints'] = J_transformed
         return res
+
+
+if __name__ == '__main__':
+    MODEL_FILENAME = r'E:\VCL\Data\SMPL\star_1_1\neutral\model.npz'
+    NUM_BETAS = 10
+    star = STAR(MODEL_FILENAME, num_betas=NUM_BETAS)
+    trans = torch.Tensor([[0.0, 0.0, 2.0]])
+    pose = torch.randn(1, 72)
+    betas = torch.zeros(1, NUM_BETAS)
+    res = star(pose, betas, trans)
+    for k, v in res.items():
+        print(f"{k}: {v.shape}")
+    

@@ -23,6 +23,7 @@ import torch
 import numpy as np
 from star.pytorch.star import STAR
 from torch.autograd import Variable
+import tqdm
 
 def get_vert_connectivity(num_verts, mesh_f):
     import scipy.sparse as sp
@@ -93,7 +94,7 @@ def convert_smpl_2_star(smpl,MAX_ITER_EDGES,MAX_ITER_VERTS,NUM_BETAS,GENDER):
     ########################################################################################################################
     # Fitting the model with an on edges objective first
     print('STAGE 1/2 - Fitting the Model on Edges Objective')
-    for t in range(MAX_ITER_EDGES):
+    for t in tqdm.trange(MAX_ITER_EDGES, desc='STAGE 1/2 - Fitting the Global Rotation on Edges Objective'):
         poses = torch.cat((global_pose, joints_pose), 1)
         d = star(poses, betas, trans)
 
@@ -106,7 +107,7 @@ def convert_smpl_2_star(smpl,MAX_ITER_EDGES,MAX_ITER_VERTS,NUM_BETAS,GENDER):
         optimizer.step(edge_loss_closure)
 
     optimizer = torch.optim.LBFGS([joints_pose], lr=learning_rate)
-    for t in range(MAX_ITER_EDGES):
+    for t in tqdm.trange(MAX_ITER_EDGES, desc='STAGE 1/2 - Fitting the Model Joints on Edges Objective'):
         poses = torch.cat((global_pose, joints_pose), 1)
         d = star(poses, betas, trans)
 
@@ -121,7 +122,7 @@ def convert_smpl_2_star(smpl,MAX_ITER_EDGES,MAX_ITER_VERTS,NUM_BETAS,GENDER):
     # Fitting the model with an on vertices objective
     print('STAGE 2/2 - Fitting the Model on a Vertex Objective')
     optimizer = torch.optim.LBFGS([joints_pose, global_pose, trans, betas], lr=learning_rate)
-    for t in range(MAX_ITER_VERTS):
+    for t in tqdm.trange(MAX_ITER_VERTS, desc='STAGE 2/2 - Fitting the Model on a Vertex Objective'):
         poses = torch.cat((global_pose, joints_pose), 1)
         d = star(poses, betas, trans)
 
@@ -176,7 +177,7 @@ def convert_smplx_2_star(smplx,MAX_ITER_EDGES,MAX_ITER_VERTS,NUM_BETAS,GENDER):
 
     # Fitting the model with an on edges objective first
     print('STAGE 1/2 - Fitting the Model on Edges Objective')
-    for t in range(MAX_ITER_EDGES):
+    for t in tqdm.trange(MAX_ITER_EDGES, desc='STAGE 1/2 - Fitting the Global Rotation on Edges Objective'):
         poses = torch.cat((global_pose, joints_pose), 1)
         d = star(poses, betas, trans)
 
@@ -189,7 +190,7 @@ def convert_smplx_2_star(smplx,MAX_ITER_EDGES,MAX_ITER_VERTS,NUM_BETAS,GENDER):
         optimizer.step(edge_loss_closure)
 
     optimizer = torch.optim.LBFGS([joints_pose], lr=learning_rate)
-    for t in range(MAX_ITER_EDGES):
+    for t in tqdm.trange(MAX_ITER_EDGES, desc='STAGE 1/2 - Fitting the Model Joints on Edges Objective'):
         poses = torch.cat((global_pose, joints_pose), 1)
         d = star(poses, betas, trans)
         def edge_loss_closure():
@@ -202,7 +203,7 @@ def convert_smplx_2_star(smplx,MAX_ITER_EDGES,MAX_ITER_VERTS,NUM_BETAS,GENDER):
     # Fitting the model with an on vertices objective
     print('STAGE 2/2 - Fitting the Model on a Vertex Objective')
     optimizer = torch.optim.LBFGS([joints_pose, global_pose, trans, betas], lr=learning_rate)
-    for t in range(MAX_ITER_VERTS):
+    for t in tqdm.trange(MAX_ITER_VERTS, desc='STAGE 2/2 - Fitting the Model on a Vertex Objective'):
         poses = torch.cat((global_pose, joints_pose), 1)
         d = star(poses, betas, trans)
         def vertex_closure():

@@ -1,0 +1,43 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal",
+            "args": [
+                "--smplx_root",
+                "E:\\VCL\\Data\\SMPL",
+                "--scale",
+                "0.2",
+                "--betas",
+                "300", //"10",
+            ]
+        },
+        {
+            "name": "Test STAR",
+            "type": "python",
+            "request": "launch",
+            "program": "test_star.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--img_glob",
+                "C:\\Users\\nzioulis\\Desktop\\Code\\VZ\\data\\original\\team\\*.jpg",
+                // "--pkl_glob", "C:\\Users\\nzioulis\\Desktop\\Code\\bifuse\\pkg\\actions\\fit\\2021-11-28\\10-27-06-smplify_fits\\*.pkl",
+                "--pkl_glob",
+                "C:\\Users\\nzioulis\\Desktop\\Code\\bifuse\\pkg\\actions\\fit\\2021-11-30\\15-15-32-smplify_fits\\*.pkl",
+                "--smplx_root",
+                "E:\\VCL\\Data\\SMPL",
+                "--scale",
+                "0.2",
+                "--betas",
+                "300", //"10",
+            ]
+        }
+    ]
+}
