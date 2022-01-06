@@ -27,16 +27,16 @@
             "console": "integratedTerminal",
             "args": [
                 "--img_glob",
-                "C:\\Users\\nzioulis\\Desktop\\Code\\VZ\\data\\original\\team\\*.jpg",
+                "E:\\Data\\Klothed\\original\\team\\*.jpg",
                 // "--pkl_glob", "C:\\Users\\nzioulis\\Desktop\\Code\\bifuse\\pkg\\actions\\fit\\2021-11-28\\10-27-06-smplify_fits\\*.pkl",
                 "--pkl_glob",
-                "C:\\Users\\nzioulis\\Desktop\\Code\\bifuse\\pkg\\actions\\fit\\2021-11-30\\15-15-32-smplify_fits\\*.pkl",
+                "E:\\Dev\\py\\bodyfit\\actions\\fit\\2022-01-01\\23-18-54-smplify_fits_sil@s3\\*.pkl",
                 "--smplx_root",
-                "E:\\VCL\\Data\\SMPL",
+                "E:\\Data\\SMPL",
                 "--scale",
                 "0.2",
                 "--betas",
-                "300", //"10",
+                "10", // "300", //"10",
             ]
         }
     ]

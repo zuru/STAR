@@ -41,6 +41,23 @@ __KEY_MAP__ = {
     'body.pose': '',
     'body.expression': 'expression',
     'body.pose': 'body_pose',
+    'translation_t': 'camera_translation',
+    'betas': 'betas',
+    'betas_t': 'betas',
+    'global_orient': 'global_orient',
+    'global_orient_t': 'global_orient',
+    'lhand_t': 'left_hand_pose',
+    'rhand_t': 'right_hand_pose',
+    'jaw_t': 'jaw_pose',
+    'expression_t': 'expression',
+    'decoded.pose': 'body_pose',
+    'star_left_hand': 'left_hand_pose',
+    'star_right_hand': 'right_hand_pose',
+    'decoded.pose': 'body_pose',
+    'star.joints': 'joints',
+    'joints2d': 'joints2d',
+    'keypoints': 'keypoints2d',
+    'pose_t': 'pose_t',
 }# dict_keys(['camera_rotation', 'camera_translation', 'betas', 'global_orient', 'left_hand_pose', 'right_hand_pose', 'jaw_pose', 'leye_pose', 'reye_pose', 'expression', 'body_pose'])
 
 def _create_raymond_lights():
@@ -136,7 +153,8 @@ if __name__ == '__main__':
         with imageio.get_writer(gif_filename, mode='I', fps=25) as writer:
             # iters = toolz.drop(1700, iters)
             for iter in tqdm.tqdm(iters, desc=f"({os.path.basename(img_filename)}) - {i}: iterations"):
-                pose_embedding = iter.pop('embedding')
+                iter = toolz.keymap(lambda k: k.replace('params.', ''), iter)
+                pose_embedding = iter.get('embedding') or iter.get('pose_t')
                 iteration = iter.pop('iteration')
                 stage = iter.pop('stage')
                 body_pose = vposer.decode(torch.from_numpy(pose_embedding)).get('pose_body').reshape(1, -1)
@@ -181,7 +199,8 @@ if __name__ == '__main__':
                     23, 10, 23, 23, 11, 23
                 ], dtype=np.int32))
                 # ignore: [0, 23, 22, 20, 19, 17, 16, 15, 14, ]
-                star_joints = star.v_template.squeeze()
+                # star_joints = star.v_template.squeeze()
+                star_joints = star_model['vertices'].squeeze()
                 # star_joints = torch.index_select(star_joints, dim=0, index=indices)
                 vertex_data = np.empty(len(star_joints), dtype=dtype)
                 vertex_data["x"] = star_joints[:, 0]
